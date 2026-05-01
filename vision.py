@@ -1,3 +1,4 @@
+import os
 """
 vision.py — Image analysis using Ollama + LLaVA (local, free)
 
@@ -122,7 +123,17 @@ def _mock_counter() -> dict:
 
 
 # ── public API ────────────────────────────────────────────────────────────────
+def analyze_images(image_paths: list[str], mock: bool = False) -> dict:
+    """
+    Analyze a list of images and return aggregated vision signals.
+    """
+    # --- ADD THIS CHECK RIGHT HERE ---
+    
+    # ---------------------------------
 
+    shelf_results    = []
+    exterior_results = []
+    counter_results  = []
 def analyze_images(image_paths: list[str], mock: bool = False) -> dict:
     """
     Analyze a list of images and return aggregated vision signals.
@@ -137,6 +148,10 @@ def analyze_images(image_paths: list[str], mock: bool = False) -> dict:
           consistency_flags: [str],
         }
     """
+    if os.environ.get("USE_MOCK_VISION") == "1":
+          mock = True
+          print("[vision] CI Environment detected: Forcing Mock Mode")
+      
     shelf_results    = []
     exterior_results = []
     counter_results  = []
