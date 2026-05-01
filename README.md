@@ -1,6 +1,6 @@
 # 🏪 KiranaLens — Underwriting the Unbanked
 
-[![CI](https://github.com/YOUR_USERNAME/kiranalens/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/kiranalens/actions)
+[![CI](https://github.com/gantayat03/kiranalens/actions/workflows/ci.yml/badge.svg)](https://github.com/gantayat03/kiranalens/actions)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Free Stack](https://img.shields.io/badge/stack-100%25%20free-teal.svg)](#tech-stack)
