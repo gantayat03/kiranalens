@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KiranaLens — Underwriting the Unbanked</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #0A1628; color: #fff; font-family: 'Segoe UI', sans-serif; }
+    .card { background: #132236; border: 1px solid #1C3251; border-radius: 12px; }
+    .teal  { color: #14B8A6; }
+    .amber { color: #F59E0B; }
+    .btn-primary {
+      background: #0D9488; color: #fff; border: none; border-radius: 8px;
+      padding: 12px 32px; font-size: 16px; font-weight: 600; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #0F766E; }
+    .drop-zone {
+      border: 2px dashed #1C3251; border-radius: 12px;
+      background: #0D1E33; transition: border-color 0.2s;
+    }
+    .drop-zone.drag-over { border-color: #14B8A6; background: #0D2A2A; }
+    .preview-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+    input[type=range] { accent-color: #14B8A6; }
+    label { color: #7FA3C0; font-size: 13px; }
+    .loader { display: none; }
+    .loader.active { display: flex; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <div class="border-b border-gray-800 px-8 py-4 flex items-center justify-between">
+    <div>
+      <span class="text-2xl font-bold">Kirana<span class="teal">Lens</span></span>
+      <span class="ml-3 text-sm" style="color:#7FA3C0">Underwriting the Unbanked</span>
+    </div>
+    <div class="text-sm px-3 py-1 rounded-full" style="background:#1C3251;color:#14B8A6">
+      v1.0 · Free Stack
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-6 py-10">
+
+    <!-- Hero -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold mb-3">Remote Cash Flow Assessment</h1>
+      <p style="color:#7FA3C0">Upload 3–5 store images + GPS coordinates. Get a <span class="teal font-semibold">Kirana Credit Score</span> in seconds.</p>
+    </div>
+
+    <!-- Form -->
+    <form id="assessForm" enctype="multipart/form-data">
+
+      <!-- Image upload -->
+      <div class="card p-6 mb-5">
+        <h2 class="font-semibold text-lg mb-1">Store Images <span class="text-red-400">*</span></h2>
+        <p class="text-sm mb-4" style="color:#7FA3C0">Upload 3–5 images: interior shelf, counter, exterior/street view</p>
+        <div class="drop-zone p-8 text-center mb-4" id="dropZone">
+          <div class="text-4xl mb-2">📸</div>
+          <p class="font-medium">Drag & drop images here</p>
+          <p class="text-sm mt-1" style="color:#7FA3C0">or</p>
+          <label for="imageInput" class="btn-primary inline-block mt-3 cursor-pointer" style="padding:8px 20px;border-radius:6px;background:#0D9488;color:#fff;font-size:13px">Browse files</label>
+          <input type="file" id="imageInput" name="images[]" multiple accept=".jpg,.jpeg,.png,.webp" class="hidden">
+        </div>
+        <div id="imagePreview" class="flex flex-wrap gap-3"></div>
+      </div>
+
+      <!-- GPS -->
+      <div class="card p-6 mb-5">
+        <h2 class="font-semibold text-lg mb-1">GPS Coordinates <span class="text-red-400">*</span></h2>
+        <p class="text-sm mb-4" style="color:#7FA3C0">Enter or auto-detect location</p>
+        <div class="grid grid-cols-2 gap-4 mb-3">
+          <div>
+            <label>Latitude</label>
+            <input id="latInput" name="lat" type="number" step="0.000001" placeholder="e.g. 12.9716"
+              class="w-full mt-1 p-2 rounded-lg text-white text-sm" style="background:#0D1E33;border:1px solid #1C3251">
+          </div>
+          <div>
+            <label>Longitude</label>
+            <input id="lngInput" name="lng" type="number" step="0.000001" placeholder="e.g. 77.5946"
+              class="w-full mt-1 p-2 rounded-lg text-white text-sm" style="background:#0D1E33;border:1px solid #1C3251">
+          </div>
+        </div>
+        <button type="button" onclick="getLocation()" class="text-sm px-4 py-2 rounded-lg" style="background:#1C3251;color:#14B8A6">
+          📍 Use my current location
+        </button>
+        <span id="gpsStatus" class="text-sm ml-2" style="color:#7FA3C0"></span>
+      </div>
+
+      <!-- Optional inputs -->
+      <div class="card p-6 mb-5">
+        <h2 class="font-semibold text-lg mb-3">Optional Details <span class="text-sm font-normal" style="color:#7FA3C0">(improve accuracy)</span></h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label>Monthly Rent (₹)</label>
+            <input name="rent" type="number" placeholder="e.g. 8000"
+              class="w-full mt-1 p-2 rounded-lg text-white text-sm" style="background:#0D1E33;border:1px solid #1C3251">
+          </div>
+          <div>
+            <label>Years in Operation</label>
+            <input name="shop_age" type="number" placeholder="e.g. 5"
+              class="w-full mt-1 p-2 rounded-lg text-white text-sm" style="background:#0D1E33;border:1px solid #1C3251">
+          </div>
+        </div>
+      </div>
+
+      <!-- Mock mode toggle -->
+      <div class="card p-4 mb-6 flex items-center justify-between">
+        <div>
+          <p class="font-medium">Demo / Mock Mode</p>
+          <p class="text-sm" style="color:#7FA3C0">Run without Ollama installed — uses simulated signals</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="mockToggle" name="mock" value="1" class="sr-only peer" checked>
+          <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:bg-teal-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary w-full text-lg py-4">
+        🔍 Run Assessment
+      </button>
+
+    </form>
+
+    <!-- Loader -->
+    <div class="loader active mt-8 flex-col items-center" id="loader" style="display:none">
+      <div class="text-5xl mb-4 animate-spin">⚙️</div>
+      <p class="text-lg font-semibold" id="loaderMsg">Analyzing images...</p>
+      <p class="text-sm mt-1" style="color:#7FA3C0">Vision AI + Geo Intelligence + Fraud Checks</p>
+    </div>
+
+    <!-- Result container (inline, filled by JS) -->
+    <div id="resultBox" class="mt-8" style="display:none"></div>
+
+  </div>
+
+  <script>
+    // ── drag & drop ──
+    const dz = document.getElementById("dropZone");
+    const inp = document.getElementById("imageInput");
+    const preview = document.getElementById("imagePreview");
+    let files = [];
+
+    dz.addEventListener("dragover", e => { e.preventDefault(); dz.classList.add("drag-over"); });
+    dz.addEventListener("dragleave", () => dz.classList.remove("drag-over"));
+    dz.addEventListener("drop", e => {
+      e.preventDefault(); dz.classList.remove("drag-over");
+      addFiles([...e.dataTransfer.files]);
+    });
+    inp.addEventListener("change", () => addFiles([...inp.files]));
+
+    function addFiles(newFiles) {
+      files = [...files, ...newFiles].slice(0, 5);
+      renderPreviews();
+    }
+
+    function renderPreviews() {
+      preview.innerHTML = "";
+      files.forEach((f, i) => {
+        const url = URL.createObjectURL(f);
+        preview.innerHTML += `
+          <div class="relative">
+            <img src="${url}" class="preview-img">
+            <button onclick="removeFile(${i})" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">✕</button>
+          </div>`;
+      });
+    }
+    function removeFile(i) { files.splice(i, 1); renderPreviews(); }
+
+    // ── GPS ──
+    function getLocation() {
+      document.getElementById("gpsStatus").textContent = "Detecting...";
+      navigator.geolocation.getCurrentPosition(p => {
+        document.getElementById("latInput").value = p.coords.latitude.toFixed(6);
+        document.getElementById("lngInput").value = p.coords.longitude.toFixed(6);
+        document.getElementById("gpsStatus").textContent = "✓ Location set";
+      }, () => {
+        document.getElementById("gpsStatus").textContent = "Could not get location";
+      });
+    }
+
+    // ── submit ──
+    document.getElementById("assessForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const form = new FormData(e.target);
+      files.forEach(f => form.append("images[]", f));
+      if (document.getElementById("mockToggle").checked) form.set("mock", "1");
+
+      document.getElementById("loader").style.display = "flex";
+      document.getElementById("resultBox").style.display = "none";
+
+      const msgs = ["Analyzing images with LLaVA...", "Querying OSM geo data...", "Running fraud checks...", "Computing KCS score..."];
+      let mi = 0;
+      const interval = setInterval(() => {
+        document.getElementById("loaderMsg").textContent = msgs[mi++ % msgs.length];
+      }, 1500);
+
+      try {
+        const res = await fetch("/assess", { method: "POST", body: form });
+        const data = await res.json();
+        clearInterval(interval);
+        document.getElementById("loader").style.display = "none";
+        renderResult(data);
+      } catch (err) {
+        clearInterval(interval);
+        document.getElementById("loader").style.display = "none";
+        alert("Assessment failed: " + err.message);
+      }
+    });
+
+    function renderResult(d) {
+      const box = document.getElementById("resultBox");
+      const flagsHtml = d.risk_flags.length
+        ? d.risk_flags.map(f => `<span class="px-2 py-1 rounded text-xs font-mono mr-2 mb-1 inline-block" style="background:#2A1A1A;color:#EF4444">${f}</span>`).join("")
+        : `<span style="color:#10B981">None detected ✓</span>`;
+
+      const kcsColor = d.kcs_score >= 650 ? "#10B981" : d.kcs_score >= 550 ? "#F59E0B" : "#EF4444";
+      const recColor = { approve:"#10B981", approve_with_conditions:"#F59E0B", needs_verification:"#EF4444", decline:"#EF4444" }[d.recommendation] || "#7FA3C0";
+
+      box.style.display = "block";
+      box.innerHTML = `
+        <div class="card p-6 mb-4">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">Assessment Result</h2>
+            <span class="text-xs px-3 py-1 rounded-full" style="background:#1C3251;color:#7FA3C0">${d.assessed_at ? new Date(d.assessed_at).toLocaleString() : ""}</span>
+          </div>
+
+          <!-- KCS + Rec -->
+          <div class="grid grid-cols-2 gap-4 mb-5">
+            <div class="p-5 rounded-xl text-center" style="background:#0D1E33;border:1px solid ${kcsColor}44">
+              <div class="text-sm mb-1" style="color:#7FA3C0">KIRANA CREDIT SCORE</div>
+              <div class="text-6xl font-bold" style="color:${kcsColor}">${d.kcs_score}</div>
+              <div class="text-sm mt-1" style="color:${kcsColor}">${d.kcs_band}</div>
+              <div class="text-xs mt-2" style="color:#7FA3C0">Confidence: ${(d.confidence_score*100).toFixed(0)}% → ${(d.confidence_90d*100).toFixed(0)}% (90d) → ${(d.confidence_180d*100).toFixed(0)}% (180d)</div>
+            </div>
+            <div class="p-5 rounded-xl" style="background:#0D1E33;border:1px solid #1C3251">
+              <div class="text-sm mb-3" style="color:#7FA3C0">REVENUE ESTIMATES</div>
+              <div class="mb-2"><span style="color:#7FA3C0;font-size:12px">Daily Sales</span><br><span class="font-semibold" style="color:#14B8A6">₹${d.daily_sales_range[0].toLocaleString("en-IN")} – ₹${d.daily_sales_range[1].toLocaleString("en-IN")}</span></div>
+              <div class="mb-2"><span style="color:#7FA3C0;font-size:12px">Monthly Revenue</span><br><span class="font-semibold text-white">₹${d.monthly_revenue_range[0].toLocaleString("en-IN")} – ₹${d.monthly_revenue_range[1].toLocaleString("en-IN")}</span></div>
+              <div class="mb-2"><span style="color:#7FA3C0;font-size:12px">Monthly Income</span><br><span class="font-semibold" style="color:#F59E0B">₹${d.monthly_income_range[0].toLocaleString("en-IN")} – ₹${d.monthly_income_range[1].toLocaleString("en-IN")}</span></div>
+              <div><span style="color:#7FA3C0;font-size:12px">Loan Eligibility</span><br><span class="font-bold" style="color:#10B981">Up to ₹${d.max_loan_eligibility.toLocaleString("en-IN")}</span></div>
+            </div>
+          </div>
+
+          <!-- Sub scores -->
+          <div class="mb-5">
+            <div class="text-sm font-semibold mb-3" style="color:#7FA3C0">SIGNAL BREAKDOWN</div>
+            ${Object.entries(d.sub_scores || {}).map(([k,v]) => `
+              <div class="flex items-center mb-2">
+                <span class="text-xs w-36" style="color:#7FA3C0">${k.replace(/_/g," ")}</span>
+                <div class="flex-1 rounded-full h-2 mx-3" style="background:#1C3251">
+                  <div class="h-2 rounded-full" style="width:${v}%;background:#0D9488"></div>
+                </div>
+                <span class="text-xs w-8 text-right" style="color:#14B8A6">${v}</span>
+              </div>`).join("")}
+          </div>
+
+          <!-- Flags -->
+          <div class="mb-4">
+            <div class="text-sm font-semibold mb-2" style="color:#7FA3C0">RISK FLAGS</div>
+            <div>${flagsHtml}</div>
+          </div>
+
+          <!-- Recommendation -->
+          <div class="p-4 rounded-xl flex items-center justify-between" style="background:#0D1E33;border:1px solid ${recColor}44">
+            <span class="text-sm" style="color:#7FA3C0">Recommendation</span>
+            <span class="font-bold text-lg uppercase" style="color:${recColor}">${d.recommendation.replace(/_/g," ")}</span>
+          </div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>
