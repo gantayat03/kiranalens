@@ -37,7 +37,7 @@ Get back a **Kirana Credit Score (KCS 0–850)** + revenue ranges + fraud flags 
 ### Option A — Mock Mode (works instantly, no Ollama needed)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/kiranalens.git
+git clone https://github.com/gantayat03/kiranalens.git
 cd kiranalens
 pip install -r requirements.txt
 python app.py
