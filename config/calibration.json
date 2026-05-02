@@ -1,0 +1,16 @@
+{
+  "sales_per_sdi_point": 85,
+  "confidence_decay_lambda": 0.1,
+  "sku_multiplier_per_10pts": 0.08,
+  "footfall_multiplier_per_10": 0.07,
+  "wage_multiplier_per_10": 0.04,
+  "competition_adjustment": 0.05,
+  "margin_rate_base": 0.14,
+  "margin_rate_premium": 0.2,
+  "uncertainty_band": 0.25,
+  "time_shift_penalty": 20,
+  "emi_cap_ratio": 0.3,
+  "expense_floor": 6000,
+  "interest_rate_annual": 18,
+  "tenure_months": 24
+}
