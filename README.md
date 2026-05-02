@@ -123,6 +123,22 @@ OUTPUT: KCS Score · Revenue Ranges · Loan Structure · Fraud Flags
 
 ---
 
+## 📸 Demo Screenshots
+
+### 🔹 Upload Interface
+![UI](assets/ui.png)
+
+### 🔹 Store View
+![Store](assets/store.png)
+
+### 🔹 Assessment Output (KCS + Loan)
+![Output](assets/output.png)
+
+### 🔹 Backend Decision Output (API Response)
+![API Response](assets/api-response.png)
+
+---
+
 ## Key Innovations
 
 | Feature | Description |
@@ -135,7 +151,7 @@ OUTPUT: KCS Score · Revenue Ranges · Loan Structure · Fraud Flags
 
 ---
 
-## Tech Stack- 100% Free
+## Tech Stack 
 
 | Component | Tool |
 |-----------|------|
