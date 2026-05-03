@@ -199,9 +199,3 @@ Check queued job state: `queued` → `processing` → `completed`/`failed`.
 pytest tests/ -v
 python tests/smoke_test.py
 ```
-
----
-
-## License
-
-MIT TenzorX 2026 National AI Hackathon
